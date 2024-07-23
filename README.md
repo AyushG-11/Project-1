@@ -1,2 +1,2 @@
 ## Wallet App
-Similar to Paytm.
+Similar app to Paytm

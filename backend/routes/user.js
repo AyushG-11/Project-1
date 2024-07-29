@@ -92,7 +92,7 @@ router.post("/signin", async (req, res) => {
       JWT_SECRET
     );
 
-    req.json({
+    res.json({
       token: token,
     });
     return;
@@ -124,13 +124,14 @@ router.put("/", authMiddleware, async (req, res) => {
   });
 });
 
-router.get("/bulk", authMiddleware, async (req, res) => {
+router.get("/bulk", async (req, res) => {
   const filter = req.query.filter || "";
+
 
   const searchQuery = {
     $or: [
-      { firstName: { $regex: filter, $options: "i" } },
-      { lastName: { $regex: filter, $options: "i" } },
+      { firstname: { $regex: filter, $options: "i" } },
+      { lastname: { $regex: filter, $options: "i" } },
     ],
   };
 
@@ -140,8 +141,8 @@ router.get("/bulk", authMiddleware, async (req, res) => {
     res.json({
       user: users.map((user) => ({
         username: user.username,
-        firstName: user.firstName,
-        lastName: user.lastName,
+        firstname: user.firstname,
+        lastname: user.lastname,
         _id: user._id,
       })),
     });

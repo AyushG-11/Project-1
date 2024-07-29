@@ -1,6 +1,7 @@
 import {useSearchParams} from "react-router-dom"
 import axios from "axios";
 import { useState } from "react";
+import "../App.css";
 
 
 export const SendMoney = () => {
@@ -8,6 +9,7 @@ export const SendMoney = () => {
     const id = searchParams.get("id");
     const name = searchParams.get("name");
     const [amount, setAmount] = useState(0);
+    const [shakeKey, setShakeKey] = useState(0);
 
     return <div className="flex justify-center h-screen bg-gray-100">
         <div className="h-full flex flex-col justify-center">
@@ -33,14 +35,24 @@ export const SendMoney = () => {
                         Amount (in Rs)
                     </label>
                     <input
-                        onChange={(e)=>setAmount(e.target.value)}
+                        key={shakeKey}
+                        onChange={(e)=>{setAmount(e.target.value); if (e.target.value < 0) {
+                            setShakeKey(prevKey => prevKey + 1); // Force re-render by updating key
+                          }}}
                         type="number"
-                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                        className={`flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ${
+                            amount < 0 ? "shake border-red-500" : ""
+                          }`}
                         id="amount"
                         placeholder="Enter amount"
                     />
                     </div>
                     <button onClick={async ()=>{
+
+                        if (amount < 0) {
+                            setShakeKey(prevKey => prevKey + 1); // Trigger shake animation
+                            return;
+                        }
 
                         await axios.post("http://localhost:3000/api/v1/account/transfer",{
                             to: id,
